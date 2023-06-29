@@ -49,8 +49,8 @@ const UserTable: React.FC<Props> = ({ users }) => {
                     <td className="px-1 py-1 xs:text-xs sm:whitespace-nowrap">
                       <div className="text-sm text-gray-900">{user.email}</div>
                     </td>
-                    <td className="px-1 py-1 sm:whitespace-nowrap">
-                      <div className="text-sm text-gray-500 overflow-hidden overflow-ellipsis w-full max-h-12 sm:max-h-auto">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500 w-12 inline-block overflow-hidden truncate">
                         {`${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}`}
                       </div>
                     </td>
