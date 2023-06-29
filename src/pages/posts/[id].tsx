@@ -1,57 +1,63 @@
 // pages/posts/[id].tsx
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import PostsHandler from "@/components/PostHandler";
 import { Post } from "@/types";
+import axios from "axios";
+import Posts from "@/components/Posts";
 
-type PostPageProps = {
-  id: string;
-  initialPosts: Post[];
-  page: number;
-};
+const PostsPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [page, setPage] = useState<number>(1);
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  if (!context.params || typeof context.params.id !== "string") {
-    // Handle the error appropriately, like returning a 404 page.
-    return {
-      notFound: true,
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!id) return; // if id is not defined, we don't fetch posts
+
+      const response = await axios.get(
+        `/api/posts/getPostsByUserId?userId=${id}&page=${page}&limit=5`
+      );
+
+      if (response.status !== 200) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setPosts(response.data);
+      console.log("PostPage fetched posts:", posts);
     };
-  }
-  const { id } = context.params;
-  const page = context.query.page ?? 1;
-  let initialPosts: Post[] = [];
 
-  console.log("getInitialPosts", id);
+    fetchPosts().catch((error) => {
+      console.error("Failed to fetch posts", error);
+    });
+  }, [id, page]);
 
-  try {
-    const response = await fetch(
-      `/api/posts/getPostsByUserId?userId=${id}&page=${page}&limit=5`
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    initialPosts = await response.json();
-  } catch (error) {
-    console.error("Failed to fetch posts", error);
-  }
-
-  return {
-    props: {
-      id,
-      initialPosts,
-      page,
-    },
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage); // This line was missing
+    router.push(`/posts/${id}?page=${newPage}`);
   };
-};
 
-const PostsPage = ({ id, initialPosts, page }: PostPageProps) => {
+  if (!id) return <div>Loading...</div>; // show loading screen when id is not defined
+
   return (
     <>
       <Link href={`/`}>back to main</Link>
-      <PostsHandler id={id} initialPosts={initialPosts} page={page} />
+      <Posts posts={posts} setPosts={setPosts} />
+      <div className="mt-4">
+        <button
+          className="mr-2 px-3 py-2 bg-blue-500 text-white rounded"
+          onClick={() => handlePageChange(Math.max(1, page - 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <button
+          className="px-3 py-2 bg-blue-500 text-white rounded"
+          onClick={() => handlePageChange(page + 1)}
+        >
+          Next
+        </button>
+      </div>
     </>
   );
 };
