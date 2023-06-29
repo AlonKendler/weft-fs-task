@@ -1,6 +1,7 @@
 // src/components/Posts.tsx
 import { Post } from "@/types";
 import { useEffect, useState } from "react";
+import PostItem from "./PostItem";
 
 type Props = {
   posts: Post[];
@@ -61,25 +62,9 @@ const Posts: React.FC<Props> = ({ posts, setPosts }) => {
         className="mb-6 p-2 border border-gray-400 rounded-md"
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filteredPosts.map((post) => {
-          return (
-            <div
-              key={post.id}
-              className="bg-white rounded-lg shadow-md p-6 relative max-w-[300px]"
-            >
-              <button
-                onClick={() => handleDelete(post.id)}
-                className="absolute top-2 right-2 text-red-600 hover:text-red-900"
-              >
-                X {/* Replace this with your delete icon */}
-              </button>
-              <div>
-                <h2 className="text-2xl font-bold mb-2">{post.title}</h2>
-                <p className="text-gray-600">{post.body}</p>
-              </div>
-            </div>
-          );
-        })}
+        {filteredPosts.map((post) => (
+          <PostItem key={post.id} post={post} handleDelete={handleDelete} />
+        ))}
       </div>
     </div>
   );
