@@ -1,5 +1,5 @@
 // pages/posts/[id].tsx
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import PostsHandler from "@/components/PostHandler";
 import { Post } from "@/types";
@@ -10,7 +10,15 @@ type PostPageProps = {
   page: number;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  if (!context.params || typeof context.params.id !== "string") {
+    // Handle the error appropriately, like returning a 404 page.
+    return {
+      notFound: true,
+    };
+  }
   const { id } = context.params;
   const page = context.query.page ?? 1;
   let initialPosts: Post[] = [];
