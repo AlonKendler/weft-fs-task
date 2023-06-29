@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let users: User[] = [];
 
   try {
-    const fetchedUsers = await fetchUsers(page, 4); // Adjust limit as needed
+    const fetchedUsers = await fetchUsers();
     users = fetchedUsers || [];
     if (!users) {
       throw new Error("No users found");
@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function Home({ users, page }: HomePageProps) {
   return (
     <>
-      <UserTable users={users} />
+      <UserTable initialUsers={users} initialPage={page} />
       <div className="mt-4">
         <button
           className="mr-2 px-3 py-2 bg-blue-500 text-white rounded"

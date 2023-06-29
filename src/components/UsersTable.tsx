@@ -1,12 +1,41 @@
+import { useEffect, useState } from "react";
 import { User } from "@/types";
 import Link from "next/link";
 
 type Props = {
-  users: User[];
+  initialUsers: User[];
+  initialPage: number;
 };
 
-//TODO: eliipses and clip adress, maybe https://github.com/tailwindlabs/tailwindcss-line-clamp/
-const UserTable: React.FC<Props> = ({ users }) => {
+const UserTable: React.FC<Props> = ({ initialUsers, initialPage }) => {
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [page, setPage] = useState<number>(initialPage);
+  const [sort, setSort] = useState<"asc" | "desc">("asc");
+
+  // Function to handle sorting of users.
+  const sortUsers = () => {
+    const newSort = sort === "asc" ? "desc" : "asc";
+    setSort(newSort);
+
+    const sortedUsers = [...users].sort((a, b) =>
+      newSort === "asc"
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name)
+    );
+
+    setUsers(sortedUsers);
+  };
+
+  // When initialUsers or initialPage changes, update users and page
+  useEffect(() => {
+    setUsers(initialUsers);
+    setPage(initialPage);
+  }, [initialUsers, initialPage]);
+
+  // Calculate the users to display based on the current page.
+  const startIndex = (page - 1) * 4; // Display 4 users per page
+  const displayedUsers = users.slice(startIndex, startIndex + 4);
+
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto">
@@ -17,9 +46,10 @@ const UserTable: React.FC<Props> = ({ users }) => {
                 <tr>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={sortUsers}
                   >
-                    Name
+                    Name {sort === "asc" ? "↓" : "↑"}
                   </th>
                   <th
                     scope="col"
@@ -36,13 +66,10 @@ const UserTable: React.FC<Props> = ({ users }) => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user, personIdx) => (
+                {displayedUsers.map((user) => (
                   <tr key={user.id}>
                     <td className="px-1 py-1 xs:text-xs sm:whitespace-nowrap">
-                      <Link
-                        href={`/posts/${user.id}?page=${1}`}
-                        className="text-sm"
-                      >
+                      <Link href={`/posts/${user.id}?page=${1}`}>
                         {user.name}
                       </Link>
                     </td>
