@@ -1,4 +1,3 @@
-// pages/posts/[id].tsx
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -33,15 +32,17 @@ const PostsPage = () => {
   }, [id, page]);
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage); // This line was missing
+    setPage(newPage);
     router.push(`/posts/${id}?page=${newPage}`);
   };
 
   if (!id) return <div>Loading...</div>; // show loading screen when id is not defined
 
   return (
-    <>
-      <Link href={`/`}>back to main</Link>
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+      <Link href={`/`} className="mb-6 text-blue-500 hover:text-blue-700">
+        Back to main
+      </Link>
       <Posts posts={posts} setPosts={setPosts} />
       <div className="mt-4">
         <button
@@ -58,7 +59,7 @@ const PostsPage = () => {
           Next
         </button>
       </div>
-    </>
+    </div>
   );
 };
 
