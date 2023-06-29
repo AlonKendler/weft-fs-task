@@ -1,6 +1,7 @@
 // pages/api/posts/deletePost.ts
+import { PostgresClient } from '@/server/dbClient';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sql } from "@vercel/postgres";
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,8 +19,11 @@ export default async function handler(
     return res.status(400).json({ message: 'No post id provided' });
   }
 
+  // Instantiate your client
+  const dbClient = new PostgresClient();
+
   try {
-    await sql`DELETE FROM posts WHERE id = ${id};`;
+    await dbClient.deletePost(id);
     return res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
     console.error(`Failed to delete the post:`, error);

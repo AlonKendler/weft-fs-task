@@ -1,9 +1,10 @@
 // pages/api/posts/getPostByUserId.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sql } from "@vercel/postgres";
 
-import { Post } from '@/types';
+
 import { paginate } from '@/utils/pagination';
+import { PostgresClient } from '@/server/dbClient';
+import { Post } from '@/types';
 
 const POSTS_API = "https://jsonplaceholder.typicode.com/posts?userId=";
 
@@ -11,7 +12,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-    console.log("asdads")
   // Check if request method is GET
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
@@ -22,19 +22,21 @@ export default async function handler(
   const page = Number(req.query.page);
   const limit = Number(req.query.limit);
 
-  // todo: create dbclient for sql querys, and use it here. later we will only change it, and code here would be the same
+  // Instantiate your client
+  const dbClient = new PostgresClient();
+
   try {
     // Get posts from the database
-    const result = await sql`SELECT * FROM posts WHERE userId = ${userId}`;
+    const posts = await dbClient.getPostsByUserId(userId);
 
     // Check if posts exist in the database
-    if (result.rows.length > 0) {
+    if (posts.length > 0) {
       console.log(`[api/postsWithPostgres] Posts found in the database for userId: ${userId}`);
-      const paginatedPosts = paginate(result.rows, limit, page);
+      const paginatedPosts = paginate(posts, limit, page);
       return res.status(200).json(paginatedPosts);
     }
 
-    // If not, fetch posts from the JSONPlaceholder API
+    // If not, fetch posts from the API
     console.log(`[api/postsWithPostgres] No posts found in the database for userId: ${userId}. Fetching from the API...`);
     const response = await fetch(`${POSTS_API}${userId}`);
     
@@ -43,14 +45,12 @@ export default async function handler(
     }
 
     // Parse the JSON response into an array of posts.
-    const posts: Post[] = await response.json();
+    const postsFromApi: Post[] = await response.json();
 
     // Store the posts in the database.
-    for(let post of posts) {
-      await sql`INSERT INTO posts (id, title, body, userId) VALUES (${post.id}, ${post.title}, ${post.body}, ${post.userId})`;
-    }
+    await dbClient.insertPosts(postsFromApi);
 
-    const paginatedPosts = paginate(posts, limit, page);
+    const paginatedPosts = paginate(postsFromApi, limit, page);
 
     return res.status(200).json(paginatedPosts);
   } catch (error) {
