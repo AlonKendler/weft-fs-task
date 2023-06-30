@@ -1,38 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Weft FS Task
 
-## Getting Started
+This project showcases a robust, modern full-stack application using Node.js, TypeScript, Next.js, and MySQL. The application is centered around a RESTful API that interacts with a MySQL database to manage blog posts for specific users.
 
-First, run the development server:
+## Project Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+### API
+
+The API is the backbone of this project. It resides in the `/pages/api/posts` directory and is built using Next.js API Routes. The API includes three primary endpoints:
+
+1. **getPostsByUserId**: Accepts a GET request with a user ID as a query parameter. It returns all posts corresponding to the provided user ID. If the posts are not already in our database, the API fetches them from the JSONPlaceholder API, stores them in our database, and then serves them.
+
+2. **deletePost**: Accepts a POST request with a post ID in the body. It deletes the specified post from the database. If the ID is not provided, it returns an error.
+
+3. **insertPosts**: Accepts a POST request with an array of posts in the body. It inserts these posts into the database.
+
+### Database Clients
+
+This application employs a MySQL database client, which leverages the `mysql2/promise` module to communicate with a MySQL database. It offers the following methods:
+
+- `getPostsByUserId(userId: string)`: Fetches all posts associated with a specific user from the database.
+
+- `deletePost(id: number)`: Deletes a particular post from the database.
+
+- `insertPosts(posts: any[])`: Inserts an array of posts into the database.
+
+- `createTablesIfNeeded()`: Initializes the database by creating the necessary tables if they do not already exist.
+
+### Deployment
+
+The deployment process has been automated using a startup shell script `startup.sh`. This script takes care of pulling the latest changes, installing dependencies, building the application, setting up the Dockerized MySQL database, and finally, starting the server. The deployment script is integrated into the `package.json` file as an NPM script, enabling the deployment of the application using a single command `npm run deploy`.
+
+### Usage
+
+To deploy the application:
+
+```sh
+npm run deploy
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
