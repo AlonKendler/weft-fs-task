@@ -37,3 +37,19 @@ To deploy the application:
 ```sh
 npm run deploy
 ```
+
+## Live Demo
+
+A live demonstration of the project is available at [weft-fs-task.vercel.app](https://weft-fs-task.vercel.app/).
+
+### Changes in Demo Version
+
+The demo version of the project implements a few significant changes:
+
+1. **Postgres Database Client**: In this version, we have replaced the MySQL database client with a Postgres database client. It interacts with a Postgres database, offering the same functionalities as the MySQL client.
+
+2. **Deployment on Vercel**: This version is deployed using [Vercel](https://vercel.com/), a platform ideal for frontend frameworks like Next.js. It provides features like automatic HTTPS, custom domains, and continuous deployment right out of the box.
+
+3. **Code Differences**: To better understand the modifications made in the demo version, you can view the diff [here](https://github.com/AlonKendler/weft-fs-task/compare/main...demo?diff=unified).
+
+Feel free to explore the live demo and inspect the changes made in the demo version. These changes are aimed at enhancing the project's functionality and deployment setup, thus making it more robust and scalable for real-world applications.
