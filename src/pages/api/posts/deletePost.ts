@@ -1,5 +1,6 @@
 // pages/api/posts/deletePost.ts
-import { PostgresClient } from '@/server/dbClient';
+// import { PostgresClient } from '@/server/dbClient';
+import { MySQLClient } from '@/server/dbCliientSQL';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 
@@ -20,7 +21,8 @@ export default async function handler(
   }
 
   // Instantiate your client
-  const dbClient = new PostgresClient();
+  // const dbClient = new PostgresClient();
+  const dbClient = new MySQLClient();
 
   try {
     await dbClient.deletePost(id);
