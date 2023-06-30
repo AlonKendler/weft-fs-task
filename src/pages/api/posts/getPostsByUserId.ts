@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 
 import { paginate } from '@/utils/pagination';
-import { PostgresClient } from '@/server/dbClient';
+import { MySQLClient } from '@/server/dbClientSQL';
 import { Post } from '@/types';
 
 const POSTS_API = "https://jsonplaceholder.typicode.com/posts?userId=";
@@ -23,7 +23,7 @@ export default async function handler(
   const limit = Number(req.query.limit);
 
   // Instantiate your client
-  const dbClient = new PostgresClient();
+  const dbClient = new MySQLClient();
 
   try {
     // Get posts from the database

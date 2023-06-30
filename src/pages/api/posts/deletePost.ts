@@ -1,6 +1,5 @@
 // pages/api/posts/deletePost.ts
-// import { PostgresClient } from '@/server/dbClient';
-import { MySQLClient } from '@/server/dbCliientSQL';
+import { MySQLClient } from '@/server/dbClientSQL';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 
@@ -21,7 +20,6 @@ export default async function handler(
   }
 
   // Instantiate your client
-  // const dbClient = new PostgresClient();
   const dbClient = new MySQLClient();
 
   try {
@@ -29,6 +27,6 @@ export default async function handler(
     return res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
     console.error(`Failed to delete the post:`, error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(409).json({ message: 'Internal Server Error' });
   }
 };
