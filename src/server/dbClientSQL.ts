@@ -20,9 +20,9 @@ export class MySQLClient {
   }
 
   async getPostsByUserId(userId: string) {
-    const [rows] = await this.pool.query('SELECT * FROM posts WHERE userId = ?', [userId]);
+    const [rows] = await this.pool.query<mysql.RowDataPacket[]>('SELECT * FROM posts WHERE userId = ?', [userId]);
     return rows;
-  }
+}
 
   async deletePost(id: number) {
     await this.pool.query('DELETE FROM posts WHERE id = ?', [id]);
